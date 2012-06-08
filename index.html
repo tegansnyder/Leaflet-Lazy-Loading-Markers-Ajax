@@ -13,23 +13,57 @@
 	<div id="map" style="width: 600px; height: 400px"></div>
 
 	<script src="Leaflet/dist/leaflet.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
 	<script>
 		var map = new L.Map('map');
+		var markersLayer = new L.LayerGroup();
 
 		var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png',
 			cloudmadeAttribution = 'Map data &copy; 2011 OpenStreetMap contributors, Imagery &copy; 2011 CloudMade',
 			cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18, attribution: cloudmadeAttribution});
 
 		map.setView(new L.LatLng(40.81259, -96.70189), 13).addLayer(cloudmade);
+		
 
+		$(function() {
+			
+			loadMarkers();
+			
+			map.on('drag', function(e) {
+				markersLayer.clearLayers();
+			});
+			
+			map.on('dragend', function(e) {
+				loadMarkers();
+			});
+			
+			
+		});
+		
+		function loadMarkers() {
+		
+			markersLayer.clearLayers();
+			var bounds = map.getBounds();
 
-		var markerLocation = new L.LatLng(40.81259, -96.70189),
-			marker = new L.Marker(markerLocation);
+			bounds = bounds._northEast.lat + ',' + bounds._northEast.lng + ',' + bounds._southWest.lat + ',' + bounds._southWest.lng;
+		
+			$.get("ajax.php?bounds=" + bounds, { name: "John", time: "2pm" }, function(data){
+				
+				$(data).each(function() {
 
-		map.addLayer(marker);
-
-
-
+					var marker = new L.Marker(new L.LatLng(this.lat, this.lng));
+					
+					markersLayer.addLayer(marker);
+					map.addLayer(markersLayer);
+					
+				});
+				
+				
+			}, 'json');
+		
+		}
 	</script>
+	
 </body>
 </html>
