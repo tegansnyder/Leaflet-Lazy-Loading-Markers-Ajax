@@ -48,7 +48,7 @@
 
 			bounds = bounds._northEast.lat + ',' + bounds._northEast.lng + ',' + bounds._southWest.lat + ',' + bounds._southWest.lng;
 		
-			$.get("ajax.php?bounds=" + bounds, { name: "John", time: "2pm" }, function(data){
+			$.get("ajax.php?bounds=" + bounds, { some_var: "" }, function(data){
 				
 				$(data).each(function() {
 
